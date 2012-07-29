@@ -3,14 +3,14 @@ Depends on	jQuery
 **/
 
 (function ($) {
-    if (!window.Genesis) {
-        window.Genesis = {};
+    if (!window.Gossamer) {
+        window.Gossamer = {};
     }
-    if (!Genesis.utils) {
-        window.Genesis.utils = {};
+    if (!Gossamer.utils) {
+        window.Gossamer.utils = {};
     }
 
-    window.Genesis.utils.ajax = new (function () {
+    window.Gossamer.utils.ajax = new (function () {
         this.get = function (url, async, onSuccess, onError) {
             onError = onError || function () { };
             $.ajax({
@@ -18,7 +18,7 @@ Depends on	jQuery
                 type: 'GET',
                 async: async,
                 success: function (data) {
-                    if (window.Genesis.utils.ajax.checkStatus(data)) {
+                    if (window.Gossamer.utils.ajax.checkStatus(data)) {
                         onSuccess(data) || function () { }
                     }
                 },
@@ -39,7 +39,7 @@ Depends on	jQuery
                 contentType: "application/json",
                 data: JSON.stringify(data),
                 success: function (data) {
-                    if (window.Genesis.utils.ajax.checkStatus(data)) {
+                    if (window.Gossamer.utils.ajax.checkStatus(data)) {
                         onSuccess(data) || function () { }
                     }
                 },
@@ -63,7 +63,7 @@ Depends on	jQuery
                     if (ignoreStatus) {
                         data.ignoreStatus = true;
                     }
-                    if (window.Genesis.utils.ajax.checkStatus(data)) {
+                    if (window.Gossamer.utils.ajax.checkStatus(data)) {
                         onSuccess(data) || function () { }
                     }
                 },
@@ -85,7 +85,7 @@ Depends on	jQuery
                     if (ignoreStatus) {
                         data.ignoreStatus = true;
                     }
-                    if (window.Genesis.utils.ajax.checkStatus(data)) {
+                    if (window.Gossamer.utils.ajax.checkStatus(data)) {
                         onSuccess(data) || function () { }
                     }
                 },
@@ -104,7 +104,7 @@ Depends on	jQuery
                 }
                 if (data.Code != undefined) {
                     if (data.Code == '8027' || data.Code == '8002' || window.sessionDown) {
-                        new Genesis.views.sessionExpiredView().render(data, function () {
+                        new Gossamer.views.sessionExpiredView().render(data, function () {
                             EventManager.fire('logoutClicked', this);
                         });
                         return false;
@@ -112,7 +112,7 @@ Depends on	jQuery
                 }
                 else if (data.Status != undefined) {
                     if (data.Status.Code == '8027' || data.Status.Code == '8002' || window.sessionDown) {
-                        new Genesis.views.sessionExpiredView().render(data, function () {
+                        new Gossamer.views.sessionExpiredView().render(data, function () {
                             EventManager.fire('logoutClicked', this);
                         });
                         return false;

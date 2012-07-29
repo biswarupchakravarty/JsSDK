@@ -4,14 +4,14 @@
 **/
 
 (function($) {
-	if (!window.Genesis) {
-		window.Genesis = {};
+	if (!window.Gossamer) {
+		window.Gossamer = {};
 	}
-	if (!Genesis.utils) {
-		window.Genesis.utils = {};
+	if (!Gossamer.utils) {
+		window.Gossamer.utils = {};
 	}
 	
-	window.Genesis.utils.cookies = new (function() {
+	window.Gossamer.utils.cookies = new (function() {
 		this.get = function(cookieName) {
 			var val = $.cookies.get(cookieName);
 			if (val != null) {

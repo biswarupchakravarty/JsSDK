@@ -4,7 +4,7 @@ Gossamer.utils.cookies
 **/
 
 function GossamerStorage(op) {
-    var SESSION_COOKIE_NAME = 'genesis-session';
+    var SESSION_COOKIE_NAME = 'Gossamer-session';
     var sessionServiceUrl = '/session.svc';
 
     var options = op || {};
@@ -21,12 +21,12 @@ function GossamerStorage(op) {
 
     this.session = {
         createSession: function (loginCredentials, onSuccess, onError) {
-            var url = Genesis.storage.urlFactory.session.getCreateSessionUrl(loginCredentials);
-            Genesis.utils.ajax.get(url, true, function (data) {
+            var url = Gossamer.storage.urlFactory.session.getCreateSessionUrl(loginCredentials);
+            Gossamer.utils.ajax.get(url, true, function (data) {
                 if (typeof (data.Code) != "undefined" && data.Code != null && data.Code == '200') {
                     if (typeof (onSuccess) == 'function')
                         onSuccess(data.SessionId);
-                    Genesis.utils.cookies.set({ name: SESSION_COOKIE_NAME, value: data.SessionId });
+                    Gossamer.utils.cookies.set({ name: SESSION_COOKIE_NAME, value: data.SessionId });
                 } else {
                     if (typeof (onError) == 'function')
                         onError();
@@ -38,15 +38,15 @@ function GossamerStorage(op) {
     //schema storage
     this.schemas = {
         exportSchemas: function (id) {
-            var url = Genesis.storage.urlFactory.schema.getExportUrl(id);
+            var url = Gossamer.storage.urlFactory.schema.getExportUrl(id);
 
             // window.location = url;
             $('<iframe></iframe>').appendTo($(document.body)).attr('src', url).attr('id', 'tmpIFrame').css('width', '0').css('height', '0');
 
         },
         searchAll: function (catalogName, onSuccess, onError) {
-            var url = Genesis.storage.urlFactory.schema.getSearchAllUrl(catalogName, ['orderBy=UtcLastUpdatedDate']);
-            Genesis.utils.ajax.get(url, true, function (data) {
+            var url = Gossamer.storage.urlFactory.schema.getSearchAllUrl(catalogName, ['orderBy=UtcLastUpdatedDate']);
+            Gossamer.utils.ajax.get(url, true, function (data) {
                 if (typeof (data.Schemas) != "undefined" && data.Schemas != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Schemas);
@@ -64,8 +64,8 @@ function GossamerStorage(op) {
         },
 
         getProperties: function (schemaId, onSuccess, onError) {
-            var url = Genesis.storage.urlFactory.schema.getGetPropertiesUrl(schemaId);
-            Genesis.utils.ajax.get(url, true, function (data) {
+            var url = Gossamer.storage.urlFactory.schema.getGetPropertiesUrl(schemaId);
+            Gossamer.utils.ajax.get(url, true, function (data) {
                 if (typeof (data.Schema) != "undefined" && data.Schema != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Schema);
@@ -83,7 +83,7 @@ function GossamerStorage(op) {
         },
 
         update: function (schema, onSuccess, onError) {
-            Genesis.utils.ajax.post(Genesis.storage.urlFactory.schema.getUpdateUrl(schema.Id), schema, true, function (data) {
+            Gossamer.utils.ajax.post(Gossamer.storage.urlFactory.schema.getUpdateUrl(schema.Id), schema, true, function (data) {
                 if (typeof (data.Schema) != "undefined" && data.Schema != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Schema);
@@ -101,7 +101,7 @@ function GossamerStorage(op) {
         },
 
         create: function (schema, onSuccess, onError) {
-            Genesis.utils.ajax.put(Genesis.storage.urlFactory.schema.getCreateUrl(), schema, true, function (data) {
+            Gossamer.utils.ajax.put(Gossamer.storage.urlFactory.schema.getCreateUrl(), schema, true, function (data) {
                 if (typeof (data.Schema) != "undefined" && data.Schema != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Schema);
@@ -119,7 +119,7 @@ function GossamerStorage(op) {
         },
 
         deleteSchema: function (schemaId, onSuccess, onError) {
-            Genesis.utils.ajax.del(Genesis.storage.urlFactory.schema.getDeleteUrl(schemaId), false, function (data) {
+            Gossamer.utils.ajax.del(Gossamer.storage.urlFactory.schema.getDeleteUrl(schemaId), false, function (data) {
                 if (typeof (data.Code) != "undefined" && data.Code != null && data.Code == '200') {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data);
@@ -137,7 +137,7 @@ function GossamerStorage(op) {
         },
 
         addProperty: function (schemaId, property, onSuccess, onError) {
-            Genesis.utils.ajax.put(Genesis.storage.urlFactory.schema.getAddPropertyUrl(schemaId), property, true, function (data) {
+            Gossamer.utils.ajax.put(Gossamer.storage.urlFactory.schema.getAddPropertyUrl(schemaId), property, true, function (data) {
                 if (typeof (data.Schema) != "undefined" && data.Schema != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Schema);
@@ -155,7 +155,7 @@ function GossamerStorage(op) {
         },
 
         updateProperty: function (schemaId, property, onSuccess, onError) {
-            Genesis.utils.ajax.post(Genesis.storage.urlFactory.schema.getUpdatePropertyUrl(schemaId), property, true, function (data) {
+            Gossamer.utils.ajax.post(Gossamer.storage.urlFactory.schema.getUpdatePropertyUrl(schemaId), property, true, function (data) {
                 if (typeof (data.Schema) != "undefined" && data.Schema != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Schema);
@@ -173,7 +173,7 @@ function GossamerStorage(op) {
         },
 
         deleteProperty: function (schemaId, propertyId, onSuccess, onError) {
-            Genesis.utils.ajax.del(Genesis.storage.urlFactory.schema.getDeletePropertyUrl(schemaId, propertyId), true, function (data) {
+            Gossamer.utils.ajax.del(Gossamer.storage.urlFactory.schema.getDeletePropertyUrl(schemaId, propertyId), true, function (data) {
                 if (typeof (data.Schema) != "undefined" && data.Schema != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Schema);
@@ -191,7 +191,7 @@ function GossamerStorage(op) {
         },
 
         updateAttributes: function (schema, onSuccess, onError) {
-            Genesis.utils.ajax.post(Genesis.storage.urlFactory.schema.getUpdateAttributesUrl(schema.Id), schema.Attributes, true, function (data) {
+            Gossamer.utils.ajax.post(Gossamer.storage.urlFactory.schema.getUpdateAttributesUrl(schema.Id), schema.Attributes, true, function (data) {
                 if (typeof (data.Schema) != "undefined" && data.Schema != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Schema);
@@ -210,8 +210,8 @@ function GossamerStorage(op) {
 
         getSchemaRawWithProperties: function (schemaId, onSuccess, onError) {
             onSuccess = onSuccess || function () { };
-            var url = Genesis.storage.urlFactory.schema.getGetUrl(schemaId);
-            Genesis.utils.ajax.get(url, true, function (data) {
+            var url = Gossamer.storage.urlFactory.schema.getGetUrl(schemaId);
+            Gossamer.utils.ajax.get(url, true, function (data) {
                 onSuccess(data, url);
             }, function () {
                 if (typeof (onError) == "function") {
@@ -224,14 +224,14 @@ function GossamerStorage(op) {
     //relation storage
     this.relations = {
         exportRelations: function (id) {
-            var url = Genesis.storage.urlFactory.relation.getExportUrl(id);
+            var url = Gossamer.storage.urlFactory.relation.getExportUrl(id);
 
             window.location = url;
         },
 
         searchAll: function (catalogName, onSuccess, onError) {
-            var url = Genesis.storage.urlFactory.relation.getSearchAllUrl(catalogName);
-            Genesis.utils.ajax.get(url, true, function (data) {
+            var url = Gossamer.storage.urlFactory.relation.getSearchAllUrl(catalogName);
+            Gossamer.utils.ajax.get(url, true, function (data) {
                 if (typeof (data.Relations) != "undefined" && data.Relations != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Relations);
@@ -249,8 +249,8 @@ function GossamerStorage(op) {
         },
 
         searchBySchema: function (blueprintName, schemaName, onSuccess, onError) {
-            var url = Genesis.storage.urlFactory.relation.getSearchBySchemaUrl(blueprintName, schemaName);
-            Genesis.utils.ajax.get(url, true, function (data) {
+            var url = Gossamer.storage.urlFactory.relation.getSearchBySchemaUrl(blueprintName, schemaName);
+            Gossamer.utils.ajax.get(url, true, function (data) {
                 if (typeof (data.Relations) != "undefined" && data.Relations != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Relations);
@@ -268,8 +268,8 @@ function GossamerStorage(op) {
         },
 
         getProperties: function (relationId, onSuccess, onError) {
-            var url = Genesis.storage.urlFactory.relation.getGetPropertiesUrl(relationId);
-            Genesis.utils.ajax.get(url, true, function (data) {
+            var url = Gossamer.storage.urlFactory.relation.getGetPropertiesUrl(relationId);
+            Gossamer.utils.ajax.get(url, true, function (data) {
                 if (typeof (data.Relation) != "undefined" && data.Relation != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Relation);
@@ -287,7 +287,7 @@ function GossamerStorage(op) {
         },
 
         create: function (relation, onSuccess, onError) {
-            Genesis.utils.ajax.put(Genesis.storage.urlFactory.relation.getCreateUrl(), relation, true, function (data) {
+            Gossamer.utils.ajax.put(Gossamer.storage.urlFactory.relation.getCreateUrl(), relation, true, function (data) {
                 if (typeof (data.Relation) != "undefined" && data.Relation != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Relation);
@@ -305,7 +305,7 @@ function GossamerStorage(op) {
         },
 
         update: function (relation, onSuccess, onError) {
-            Genesis.utils.ajax.post(Genesis.storage.urlFactory.relation.getUpdateUrl(relation.Id), relation, true, function (data) {
+            Gossamer.utils.ajax.post(Gossamer.storage.urlFactory.relation.getUpdateUrl(relation.Id), relation, true, function (data) {
                 if (typeof (data.Relation) != "undefined" && data.Relation != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Relation);
@@ -323,7 +323,7 @@ function GossamerStorage(op) {
         },
 
         updateEndPoint: function (relationId, endPoint, type, onSuccess, onError) {
-            Genesis.utils.ajax.post(Genesis.storage.urlFactory.relation.getUpdateEndPointUrl(relationId, type), endPoint, true, function (data) {
+            Gossamer.utils.ajax.post(Gossamer.storage.urlFactory.relation.getUpdateEndPointUrl(relationId, type), endPoint, true, function (data) {
                 if (typeof (data.Relation) != "undefined" && data.Relation != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Relation);
@@ -341,7 +341,7 @@ function GossamerStorage(op) {
         },
 
         deleteRelation: function (relationId, onSuccess, onError) {
-            Genesis.utils.ajax.del(Genesis.storage.urlFactory.relation.getDeleteUrl(relationId), false, function (data) {
+            Gossamer.utils.ajax.del(Gossamer.storage.urlFactory.relation.getDeleteUrl(relationId), false, function (data) {
                 if (typeof (data.Code) != "undefined" && data.Code != null && data.Code == "200") {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data);
@@ -359,7 +359,7 @@ function GossamerStorage(op) {
         },
 
         addProperty: function (relationId, property, onSuccess, onError) {
-            Genesis.utils.ajax.put(Genesis.storage.urlFactory.relation.getAddPropertyUrl(relationId), property, true, function (data) {
+            Gossamer.utils.ajax.put(Gossamer.storage.urlFactory.relation.getAddPropertyUrl(relationId), property, true, function (data) {
                 if (typeof (data.Relation) != "undefined" && data.Relation != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Relation);
@@ -377,7 +377,7 @@ function GossamerStorage(op) {
         },
 
         updateProperty: function (relationId, property, onSuccess, onError) {
-            Genesis.utils.ajax.post(Genesis.storage.urlFactory.relation.getUpdatePropertyUrl(relationId), property, true, function (data) {
+            Gossamer.utils.ajax.post(Gossamer.storage.urlFactory.relation.getUpdatePropertyUrl(relationId), property, true, function (data) {
                 if (typeof (data.Relation) != "undefined" && data.Relation != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Relation);
@@ -395,7 +395,7 @@ function GossamerStorage(op) {
         },
 
         deleteProperty: function (relationId, propertyId, onSuccess, onError) {
-            Genesis.utils.ajax.del(Genesis.storage.urlFactory.relation.getDeletePropertyUrl(relationId, propertyId), true, function (data) {
+            Gossamer.utils.ajax.del(Gossamer.storage.urlFactory.relation.getDeletePropertyUrl(relationId, propertyId), true, function (data) {
                 if (typeof (data.Relation) != "undefined" && data.Relation != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Relation);
@@ -413,7 +413,7 @@ function GossamerStorage(op) {
         },
 
         updateAttributes: function (relation, onSuccess, onError) {
-            Genesis.utils.ajax.post(Genesis.storage.urlFactory.relation.getUpdateAttributesUrl(relation.Id), relation.Attributes, true, function (data) {
+            Gossamer.utils.ajax.post(Gossamer.storage.urlFactory.relation.getUpdateAttributesUrl(relation.Id), relation.Attributes, true, function (data) {
                 if (typeof (data.Relation) != "undefined" && data.Relation != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Relation);
@@ -432,8 +432,8 @@ function GossamerStorage(op) {
 
         getRelationRawWithProperties: function (relationId, onSuccess, onError) {
             onSuccess = onSuccess || function () { };
-            var url = Genesis.storage.urlFactory.relation.getGetUrl(relationId);
-            Genesis.utils.ajax.get(url, true, function (data) {
+            var url = Gossamer.storage.urlFactory.relation.getGetUrl(relationId);
+            Gossamer.utils.ajax.get(url, true, function (data) {
                 onSuccess(data, url);
             }, function () {
                 if (typeof (onError) == "function") {
@@ -446,18 +446,18 @@ function GossamerStorage(op) {
     //cannedlist storage
     this.cannedLists = {
         exportLists: function (id) {
-            var url = Genesis.storage.urlFactory.cannedList.getExportUrl(id);
+            var url = Gossamer.storage.urlFactory.cannedList.getExportUrl(id);
             window.location = url;
         },
 
         exportListItems: function (id, cannedListId) {
-            var url = Genesis.storage.urlFactory.cannedList.getListItemExportUrl(id, cannedListId);
+            var url = Gossamer.storage.urlFactory.cannedList.getListItemExportUrl(id, cannedListId);
             window.location = url;
         },
 
         searchAll: function (catalogName, onSuccess, onError) {
-            var url = Genesis.storage.urlFactory.cannedList.getSearchAllUrl(catalogName);
-            Genesis.utils.ajax.get(url, true, function (data) {
+            var url = Gossamer.storage.urlFactory.cannedList.getSearchAllUrl(catalogName);
+            Gossamer.utils.ajax.get(url, true, function (data) {
                 if (typeof (data.Lists) != "undefined" && data.Lists != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Lists);
@@ -475,8 +475,8 @@ function GossamerStorage(op) {
         },
 
         getListWithItems: function (cannedListId, onSuccess, onError) {
-            var url = Genesis.storage.urlFactory.cannedList.getGetItemsUrl(cannedListId);
-            Genesis.utils.ajax.get(url, true, function (data) {
+            var url = Gossamer.storage.urlFactory.cannedList.getGetItemsUrl(cannedListId);
+            Gossamer.utils.ajax.get(url, true, function (data) {
                 if (typeof (data.List) != "undefined" && data.List != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.List);
@@ -494,7 +494,7 @@ function GossamerStorage(op) {
         },
 
         getListItems: function (cannedListId, queryParams, onSuccess, onError) {
-            Genesis.utils.ajax.get(Genesis.storage.urlFactory.cannedList.getSearchListItemsUrl(cannedListId, queryParams), true, function (data) {
+            Gossamer.utils.ajax.get(Gossamer.storage.urlFactory.cannedList.getSearchListItemsUrl(cannedListId, queryParams), true, function (data) {
                 if (typeof (data.ListItems) != "undefined" && data.ListItems != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.ListItems);
@@ -513,7 +513,7 @@ function GossamerStorage(op) {
 
 
         create: function (cannedList, onSuccess, onError) {
-            Genesis.utils.ajax.put(Genesis.storage.urlFactory.cannedList.getCreateUrl(), cannedList, true, function (data) {
+            Gossamer.utils.ajax.put(Gossamer.storage.urlFactory.cannedList.getCreateUrl(), cannedList, true, function (data) {
                 if (typeof (data.List) != "undefined" && data.List != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.List);
@@ -531,7 +531,7 @@ function GossamerStorage(op) {
         },
 
         deleteCannedList: function (cannedListId, onSuccess, onError) {
-            Genesis.utils.ajax.del(Genesis.storage.urlFactory.cannedList.getDeleteUrl(cannedListId), true, function (data) {
+            Gossamer.utils.ajax.del(Gossamer.storage.urlFactory.cannedList.getDeleteUrl(cannedListId), true, function (data) {
                 if (typeof (data.Code) != "undefined" && data.Code != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data);
@@ -549,7 +549,7 @@ function GossamerStorage(op) {
         },
 
         updateListItemPosition: function (cannedListId, currentPosition, newPosition, onSuccess, onError) {
-            Genesis.utils.ajax.get(Genesis.storage.urlFactory.cannedList.getUpdateListItemPositionUrl(cannedListId, currentPosition, newPosition), true, function (data) {
+            Gossamer.utils.ajax.get(Gossamer.storage.urlFactory.cannedList.getUpdateListItemPositionUrl(cannedListId, currentPosition, newPosition), true, function (data) {
                 if (typeof (data.List) != "undefined" && data.List != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data);
@@ -567,7 +567,7 @@ function GossamerStorage(op) {
         },
 
         deleteListItem: function (cannedListId, listItemName, onSuccess, onError) {
-            Genesis.utils.ajax.del(Genesis.storage.urlFactory.cannedList.getDeleteListItemUrl(cannedListId, listItemName), true, function (data) {
+            Gossamer.utils.ajax.del(Gossamer.storage.urlFactory.cannedList.getDeleteListItemUrl(cannedListId, listItemName), true, function (data) {
                 if (typeof (data.List) != "undefined" && data.List != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data);
@@ -585,7 +585,7 @@ function GossamerStorage(op) {
         },
 
         addListItem: function (cannedListId, listItem, onSuccess, onError) {
-            Genesis.utils.ajax.post(Genesis.storage.urlFactory.cannedList.getAddListItemsUrl(cannedListId), [listItem], true, function (data) {
+            Gossamer.utils.ajax.post(Gossamer.storage.urlFactory.cannedList.getAddListItemsUrl(cannedListId), [listItem], true, function (data) {
                 if (typeof (data.List) != "undefined" && data.List != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data);
@@ -603,7 +603,7 @@ function GossamerStorage(op) {
         },
 
         updateListItem: function (cannedListId, oldName, listItem, onSuccess, onError) {
-            Genesis.utils.ajax.post(Genesis.storage.urlFactory.cannedList.getUpdateListItemUrl(cannedListId, oldName), listItem, true, function (data) {
+            Gossamer.utils.ajax.post(Gossamer.storage.urlFactory.cannedList.getUpdateListItemUrl(cannedListId, oldName), listItem, true, function (data) {
                 if (typeof (data.List) != "undefined" && data.List != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data);
@@ -621,7 +621,7 @@ function GossamerStorage(op) {
         },
 
         update: function (list, onSuccess, onError) {
-            Genesis.utils.ajax.post(Genesis.storage.urlFactory.cannedList.getUpdateUrl(list.Id), list, true, function (data) {
+            Gossamer.utils.ajax.post(Gossamer.storage.urlFactory.cannedList.getUpdateUrl(list.Id), list, true, function (data) {
                 if (typeof (data.List) != "undefined" && data.List != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.List);
@@ -640,8 +640,8 @@ function GossamerStorage(op) {
 
         getCannedListRawWithItems: function (listId, onSuccess, onError) {
             onSuccess = onSuccess || function () { };
-            var url = Genesis.storage.urlFactory.cannedList.getGetUrl(listId);
-            Genesis.utils.ajax.get(url, true, function (data) {
+            var url = Gossamer.storage.urlFactory.cannedList.getGetUrl(listId);
+            Gossamer.utils.ajax.get(url, true, function (data) {
                 onSuccess(data, url);
             }, function () {
                 if (typeof (onError) == "function") {
@@ -654,8 +654,8 @@ function GossamerStorage(op) {
     var catalogServiceUrl = '/blueprint.svc';
     this.catalogs = {
         searchAll: function (onSuccess, onError) {
-            var url = Genesis.storage.urlFactory.catalog.getSearchAllUrl();
-            Genesis.utils.ajax.get(url, true, function (data) {
+            var url = Gossamer.storage.urlFactory.catalog.getSearchAllUrl();
+            Gossamer.utils.ajax.get(url, true, function (data) {
                 if (typeof (data.Blueprints) != "undefined" && data.Blueprints != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Blueprints);
@@ -676,7 +676,7 @@ function GossamerStorage(op) {
     this.blueprints = {
 
         create: function (blueprint, onSuccess, onError) {
-            Genesis.utils.ajax.put(Genesis.storage.urlFactory.blueprint.getCreateUrl(), blueprint, true, function (data) {
+            Gossamer.utils.ajax.put(Gossamer.storage.urlFactory.blueprint.getCreateUrl(), blueprint, true, function (data) {
                 if (typeof (data.Blueprint) != "undefined" && data.Blueprint != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Blueprint);
@@ -694,8 +694,8 @@ function GossamerStorage(op) {
         },
 
         getAllSchemas: function (blueprintId, onSuccess, onError) {
-            var url = Genesis.storage.urlFactory.schema.getSearchAllUrl(blueprintId);
-            Genesis.utils.ajax.get(url, true, function (data) {
+            var url = Gossamer.storage.urlFactory.schema.getSearchAllUrl(blueprintId);
+            Gossamer.utils.ajax.get(url, true, function (data) {
                 if (typeof (data.Schemas) != "undefined" && data.Schemas != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Schemas);
@@ -713,8 +713,8 @@ function GossamerStorage(op) {
         },
 
         getAllRelations: function (blueprintId, onSuccess, onError) {
-            var url = Genesis.storage.urlFactory.relation.getSearchAllUrl(blueprintId);
-            Genesis.utils.ajax.get(url, true, function (data) {
+            var url = Gossamer.storage.urlFactory.relation.getSearchAllUrl(blueprintId);
+            Gossamer.utils.ajax.get(url, true, function (data) {
                 if (typeof (data.Relations) != "undefined" && data.Relations != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Relations);
@@ -732,8 +732,8 @@ function GossamerStorage(op) {
         },
 
         getAllCannedLists: function (blueprintId, onSuccess, onError) {
-            var url = Genesis.storage.urlFactory.cannedList.getSearchAllUrl(blueprintId);
-            Genesis.utils.ajax.get(url, true, function (data) {
+            var url = Gossamer.storage.urlFactory.cannedList.getSearchAllUrl(blueprintId);
+            Gossamer.utils.ajax.get(url, true, function (data) {
                 if (typeof (data.Lists) != "undefined" && data.Lists != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Lists);
@@ -753,7 +753,7 @@ function GossamerStorage(op) {
 
     this.deployments = {
         get: function (depId, onSuccess, onError) {
-            Genesis.utils.ajax.get(Genesis.storage.urlFactory.deployment.getGetUrl(depId), true, function (data) {
+            Gossamer.utils.ajax.get(Gossamer.storage.urlFactory.deployment.getGetUrl(depId), true, function (data) {
                 if (typeof (data.Deployment) != "undefined" && data.Deployment != null && data.Status != null && data.Status.Code == "200") {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Deployment);
@@ -771,7 +771,7 @@ function GossamerStorage(op) {
         },
 
         getPublishStatus: function (refId, onSuccess, onError) {
-            Genesis.utils.ajax.get(Genesis.storage.urlFactory.deployment.getGetPublishStatusUrl(refId), true, function (data) {
+            Gossamer.utils.ajax.get(Gossamer.storage.urlFactory.deployment.getGetPublishStatusUrl(refId), true, function (data) {
                 if (data.Status != null && data.Status.Code == "200") {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Log);
@@ -789,7 +789,7 @@ function GossamerStorage(op) {
         },
 
         create: function (deployment, onSuccess, onError) {
-            Genesis.utils.ajax.put(Genesis.storage.urlFactory.deployment.getCreateUrl(), deployment, true, function (data) {
+            Gossamer.utils.ajax.put(Gossamer.storage.urlFactory.deployment.getCreateUrl(), deployment, true, function (data) {
                 if (typeof (data.DeploymentId) != "undefined" && data.DeploymentId != null && data.Status != null && data.Status.Code == "200") {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data);
@@ -807,8 +807,8 @@ function GossamerStorage(op) {
         },
 
         searchAll: function (onSuccess, onError) {
-            var url = Genesis.storage.urlFactory.deployment.getFetchAllDeploymentsUrl();
-            Genesis.utils.ajax.get(url, true, function (data) {
+            var url = Gossamer.storage.urlFactory.deployment.getFetchAllDeploymentsUrl();
+            Gossamer.utils.ajax.get(url, true, function (data) {
                 if (typeof (data.Deployments) != "undefined" && data.Deployments != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Deployments);
@@ -826,8 +826,8 @@ function GossamerStorage(op) {
         },
 
         getAllSchemas: function (deploymentId, onSuccess, onError) {
-            var url = Genesis.storage.urlFactory.deployment.getSearchAllSchemaUrl(deploymentId);
-            Genesis.utils.ajax.get(url, true, function (data) {
+            var url = Gossamer.storage.urlFactory.deployment.getSearchAllSchemaUrl(deploymentId);
+            Gossamer.utils.ajax.get(url, true, function (data) {
                 if (typeof (data.Schemas) != "undefined" && data.Schemas != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Schemas);
@@ -845,8 +845,8 @@ function GossamerStorage(op) {
         },
 
         getAllRelations: function (deploymentId, onSuccess, onError) {
-            var url = Genesis.storage.urlFactory.deployment.getSearchAllRelationsUrl(deploymentId);
-            Genesis.utils.ajax.get(url, true, function (data) {
+            var url = Gossamer.storage.urlFactory.deployment.getSearchAllRelationsUrl(deploymentId);
+            Gossamer.utils.ajax.get(url, true, function (data) {
                 if (typeof (data.Relations) != "undefined" && data.Relations != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Relations);
@@ -864,8 +864,8 @@ function GossamerStorage(op) {
         },
 
         getAllCannedLists: function (deploymentId, onSuccess, onError) {
-            var url = Genesis.storage.urlFactory.deployment.getSearchAllListsUrl(deploymentId);
-            Genesis.utils.ajax.get(url, true, function (data) {
+            var url = Gossamer.storage.urlFactory.deployment.getSearchAllListsUrl(deploymentId);
+            Gossamer.utils.ajax.get(url, true, function (data) {
                 if (typeof (data.Lists) != "undefined" && data.Lists != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Lists);
@@ -886,7 +886,7 @@ function GossamerStorage(op) {
     var tagsServiceUrl = '/tags.svc';
     this.tags = {
         addTag: function (type, entityId, parentEntityId, tagValue, callback) {
-            Genesis.utils.ajax.get(Genesis.storage.urlFactory.tag.getAddTagUrl(type, entityId, parentEntityId, tagValue), true, function (data) {
+            Gossamer.utils.ajax.get(Gossamer.storage.urlFactory.tag.getAddTagUrl(type, entityId, parentEntityId, tagValue), true, function (data) {
                 if (typeof (callback) == "function") {
                     callback(data);
                 }
@@ -898,7 +898,7 @@ function GossamerStorage(op) {
         },
 
         removeTag: function (type, entityId, parentEntityId, tagValue, callback) {
-            Genesis.utils.ajax.get(Genesis.storage.urlFactory.tag.getRemoveTagUrl(type, entityId, parentEntityId, tagValue), true, function (data) {
+            Gossamer.utils.ajax.get(Gossamer.storage.urlFactory.tag.getRemoveTagUrl(type, entityId, parentEntityId, tagValue), true, function (data) {
                 if (typeof (callback) == "function") {
                     callback(data);
                 }
@@ -912,13 +912,13 @@ function GossamerStorage(op) {
 
     this.articles = {
         exportArticles: function (id, type) {
-            var url = Genesis.storage.urlFactory.article.getExportUrl(id, type);
+            var url = Gossamer.storage.urlFactory.article.getExportUrl(id, type);
             window.location = url;
         },
 
         searchAll: function (deploymentId, schemaId, query, pageNumber, onSuccess, onError) {
-            var url = Genesis.storage.urlFactory.article.getSearchAllUrl(deploymentId, schemaId, ['orderBy=__UtcLastUpdatedDate', 'pnum=' + pageNumber, 'freetext=' + query]);
-            Genesis.utils.ajax.get(url, true, function (data) {
+            var url = Gossamer.storage.urlFactory.article.getSearchAllUrl(deploymentId, schemaId, ['orderBy=__UtcLastUpdatedDate', 'pnum=' + pageNumber, 'freetext=' + query]);
+            Gossamer.utils.ajax.get(url, true, function (data) {
                 if (typeof (data.Articles) != "undefined" && data.Articles != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Articles, data.PagingInfo.TotalRecords);
@@ -936,7 +936,7 @@ function GossamerStorage(op) {
         },
 
         deleteArticle: function (deploymentId, articleId, schemaName, onSuccess, onError) {
-            Genesis.utils.ajax.del(Genesis.storage.urlFactory.article.getDeleteUrl(deploymentId, articleId, schemaName), true, function (data) {
+            Gossamer.utils.ajax.del(Gossamer.storage.urlFactory.article.getDeleteUrl(deploymentId, articleId, schemaName), true, function (data) {
                 if (typeof (data.Code) != "undefined" && data.Code != null && data.Code == "200") {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data);
@@ -954,7 +954,7 @@ function GossamerStorage(op) {
         },
 
         create: function (deploymentId, schemaName, article, onSuccess, onError) {
-            Genesis.utils.ajax.put(Genesis.storage.urlFactory.article.getCreateUrl(deploymentId, schemaName), article, true, function (data) {
+            Gossamer.utils.ajax.put(Gossamer.storage.urlFactory.article.getCreateUrl(deploymentId, schemaName), article, true, function (data) {
                 if (typeof (data.Article) != "undefined" && data.Article != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Article);
@@ -972,7 +972,7 @@ function GossamerStorage(op) {
         },
 
         update: function (deploymentId, article, onSuccess, onError) {
-            Genesis.utils.ajax.post(Genesis.storage.urlFactory.article.getUpdateUrl(deploymentId, article.__Id), article, true, function (data) {
+            Gossamer.utils.ajax.post(Gossamer.storage.urlFactory.article.getUpdateUrl(deploymentId, article.__Id), article, true, function (data) {
                 if (typeof (data.Article) != "undefined" && data.Article != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Article);
@@ -990,7 +990,7 @@ function GossamerStorage(op) {
         },
 
         get: function (deploymentId, schemaId, articleId, onSuccess, onError) {
-            Genesis.utils.ajax.get(Genesis.storage.urlFactory.article.getGetUrl(deploymentId, schemaId, articleId), true, function (data) {
+            Gossamer.utils.ajax.get(Gossamer.storage.urlFactory.article.getGetUrl(deploymentId, schemaId, articleId), true, function (data) {
                 if (typeof (data.Article) != "undefined" && data.Article != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Article);
@@ -1007,7 +1007,7 @@ function GossamerStorage(op) {
             });
         },
         multiGet: function (deploymentId, schemaId, articleIds, onSuccess, onError) {
-            Genesis.utils.ajax.get(Genesis.storage.urlFactory.article.getMultiGetUrl(deploymentId, schemaId, articleIds), true, function (data) {
+            Gossamer.utils.ajax.get(Gossamer.storage.urlFactory.article.getMultiGetUrl(deploymentId, schemaId, articleIds), true, function (data) {
                 if (typeof (data.Articles) != "undefined" && data.Articles != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Articles);
@@ -1034,7 +1034,7 @@ function GossamerStorage(op) {
             }
             query += ')';
 
-            Genesis.utils.ajax.get(Genesis.storage.urlFactory.article.getPropertiesSearchUrl(deploymentId, schemaName, query), isAsync, function (data) {
+            Gossamer.utils.ajax.get(Gossamer.storage.urlFactory.article.getPropertiesSearchUrl(deploymentId, schemaName, query), isAsync, function (data) {
                 if (typeof (data.Articles) != "undefined" && data.Articles != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Articles);
@@ -1054,8 +1054,8 @@ function GossamerStorage(op) {
 
     this.connections = {
         searchByArticle: function (deploymentId, relationId, articleId, label, onSuccess, onError) {
-            var url = Genesis.storage.urlFactory.connection.getSearchByArticleUrl(deploymentId, relationId, articleId, label, ['orderBy=__UtcLastUpdatedDate', 'pnum=1']);
-            Genesis.utils.ajax.get(url, true, function (data) {
+            var url = Gossamer.storage.urlFactory.connection.getSearchByArticleUrl(deploymentId, relationId, articleId, label, ['orderBy=__UtcLastUpdatedDate', 'pnum=1']);
+            Gossamer.utils.ajax.get(url, true, function (data) {
                 if (typeof (data.Connections) != "undefined" && data.Connections != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Connections, data.PagingInfo.TotalRecords);
@@ -1072,8 +1072,8 @@ function GossamerStorage(op) {
             });
         },
         create: function (deploymentId, relationId, connection, onSuccess, onError) {
-            var url = Genesis.storage.urlFactory.connection.getCreateUrl(deploymentId, relationId);
-            Genesis.utils.ajax.put(url, connection, true, function (data) {
+            var url = Gossamer.storage.urlFactory.connection.getCreateUrl(deploymentId, relationId);
+            Gossamer.utils.ajax.put(url, connection, true, function (data) {
                 if (typeof (data.Connection) != "undefined" && data.Connection != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Connection);
@@ -1090,8 +1090,8 @@ function GossamerStorage(op) {
             });
         },
         deleteConnection: function (deploymentId, relationId, connectionId, onSuccess, onError) {
-            var url = Genesis.storage.urlFactory.connection.getDeleteUrl(deploymentId, relationId, connectionId);
-            Genesis.utils.ajax.del(url, true, function (data) {
+            var url = Gossamer.storage.urlFactory.connection.getDeleteUrl(deploymentId, relationId, connectionId);
+            Gossamer.utils.ajax.del(url, true, function (data) {
                 if (typeof (data.Code) != "undefined" && data.Code != null && data.Code == "200") {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data);
@@ -1110,7 +1110,7 @@ function GossamerStorage(op) {
     };
 }
 
-if (!window.Genesis) window.Genesis = {};
-if (!Genesis.storage) Genesis.storage = new GossamerStorage();
+if (!window.Gossamer) window.Gossamer = {};
+if (!Gossamer.storage) Gossamer.storage = new GossamerStorage();
 
-Genesis.services.authenticationService.setEnvironmentData();
+Gossamer.services.authenticationService.setEnvironmentData();
