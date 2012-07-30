@@ -1112,5 +1112,3 @@ function GossamerStorage(op) {
 
 if (!window.Gossamer) window.Gossamer = {};
 if (!Gossamer.storage) Gossamer.storage = new GossamerStorage();
-
-Gossamer.services.authenticationService.setEnvironmentData();

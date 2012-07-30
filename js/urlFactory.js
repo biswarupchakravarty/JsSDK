@@ -1,11 +1,13 @@
 ﻿function UrlFactory() {
 
+	var gossamerUrl = 'http://qa-gossamer.tavisca.com/v0.9/Core';
+
     this.session = {
 
-        sessionServiceUrl: '/session.svc',
+        sessionServiceUrl: '/account.svc',
 
         getCreateSessionUrl: function (deploymentName) {
-            return String.format("{0}/create?deploymentName={1}", this.sessionServiceUrl, deploymentName);
+            return String.format(gossamerUrl + "{0}/session", this.sessionServiceUrl);
         },
 
         getDeleteSessionUrl: function (deploymentName) {
@@ -14,7 +16,7 @@
     };
 
     this.article = {
-        articleServiceUrl: '/article.svc',
+        articleServiceUrl: gossamerUrl + '/article.svc',
 
         getExportUrl: function (id, type) {
             return 'Articles.exp?ctype=Article&blueprintid=' + id + '&type=' + type;
@@ -39,9 +41,9 @@
         getSearchAllUrl: function (deploymentId, schemaId, queryParams) {
             var url = '';
 
-            url = String.format('{0}/search/{1}/{2}/all', this.articleServiceUrl, deploymentId, schemaId);
+            url = String.format('{0}/{1}/{2}/find/all', this.articleServiceUrl, deploymentId, schemaId);
 
-            url = url + '?psize=10';
+            url = url + '?psize=200';
             if (typeof (queryParams) !== 'undefined' && queryParams.length > 0) {
                 for (var i = 0; i < queryParams.length; i = i + 1) {
                     url = url + "&" + queryParams[i];
@@ -56,10 +58,10 @@
             return url;
         },
         getDeleteUrl: function (deploymentId, articleId, schemaName) {
-            return String.format('{0}/delete/{1}/{2}/{3}', this.articleServiceUrl, deploymentId, articleId, schemaName);
+            return String.format('{0}/{1}/{2}/{3}', this.articleServiceUrl, deploymentId, schemaName, articleId);
         },
-        getCreateUrl: function (deploymentId) {
-            return String.format('{0}/create/{1}', this.articleServiceUrl, deploymentId);
+        getCreateUrl: function (deploymentId, schemaName) {
+            return String.format('{0}/{1}/{2}', this.articleServiceUrl, deploymentId, schemaName);
         },
         getUpdateUrl: function (deploymentId, articleId) {
             return String.format('{0}/update/{1}/{2}', this.articleServiceUrl, deploymentId, articleId);

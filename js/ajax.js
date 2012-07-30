@@ -9,9 +9,20 @@ Depends on	jQuery
     if (!Gossamer.utils) {
         window.Gossamer.utils = {};
     }
-
+	
     window.Gossamer.utils.ajax = new (function () {
+		var appendSessionId = function(url) {
+			if (!url) return '';
+			var sessionId = Gossamer.authentication.getSessionId();
+			if (url.indexOf('?') == -1) {
+				return url + '?session=' + sessionId;
+			} else {
+				return url + '&session=' + sessionId;
+			}
+		}
+		
         this.get = function (url, async, onSuccess, onError) {
+			if (url.indexOf('ccount.svc/create') == -1) url = appendSessionId(url);
             onError = onError || function () { };
             $.ajax({
                 url: url,
@@ -52,9 +63,8 @@ Depends on	jQuery
         };
 
         this.put = function (url, data, async, onSuccess, onError, ignoreStatus) {
-            onError = onError || function () { };
             $.ajax({
-                url: url,
+                url: appendSessionId(url),
                 type: 'PUT',
                 async: async,
                 data: JSON.stringify(data),
@@ -68,9 +78,7 @@ Depends on	jQuery
                     }
                 },
                 error: function () {
-                    // EventManager.fire('logoutClicked', this);
-                    EventManager.fire("error.show", window, { message: "Cannot connect to server." });
-                    onError();
+                    (onError || function(){})();
                 }
             });
         };
@@ -78,7 +86,7 @@ Depends on	jQuery
         this.del = function (url, async, onSuccess, onError, ignoreStatus) {
             onError = onError || function () { };
             $.ajax({
-                url: url,
+                url: appendSessionId(url),
                 type: 'DELETE',
                 async: async,
                 success: function (data) {
@@ -98,6 +106,7 @@ Depends on	jQuery
         };
 
         this.checkStatus = function (data) {
+			return true;
             if (typeof (data) != undefined) {
                 if (data.ignoreStatus) {
                     return true;

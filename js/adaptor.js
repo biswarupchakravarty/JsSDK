@@ -1,136 +1,196 @@
 /**
- * Backbone localStorage Adapter
- * https://github.com/jeromegn/Backbone.localStorage
- */
+ * Backbone gossamerStorage Adapter
+ * https://github.com/jeromegn/Backbone.gossamerStorage
+ */ (function () {
+    // A simple module to replace `Backbone.sync` with *gossamerStorage*-based
+    // persistence. Models are given GUIDS, and saved into a JSON object. Simple
+    // as that.
 
-(function() {
-// A simple module to replace `Backbone.sync` with *localStorage*-based
-// persistence. Models are given GUIDS, and saved into a JSON object. Simple
-// as that.
+    // Hold reference to Underscore.js and Backbone.js in the closure in order
+    // to make things work even if they are removed from the global namespace
+    var _ = this._;
+    var Backbone = this.Backbone;
 
-// Hold reference to Underscore.js and Backbone.js in the closure in order
-// to make things work even if they are removed from the global namespace
-var _ = this._;
-var Backbone = this.Backbone;
-
-// Generate four random hex digits.
-function S4() {
-   return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
-};
-
-// Generate a pseudo-GUID by concatenating random hexadecimal.
-function guid() {
-   return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
-};
-
-// Our Store is represented by a single JS object in *localStorage*. Create it
-// with a meaningful name, like the name you'd give a table.
-// window.Store is deprectated, use Backbone.LocalStorage instead
-Backbone.LocalStorage = window.Store = function(name) {
-  this.name = name;
-  var store = this.localStorage().getItem(this.name);
-  this.records = (store && store.split(",")) || [];
-};
-
-_.extend(Backbone.LocalStorage.prototype, {
-
-  // Save the current state of the **Store** to *localStorage*.
-  save: function() {
-    this.localStorage().setItem(this.name, this.records.join(","));
-  },
-
-  // Add a model, giving it a (hopefully)-unique GUID, if it doesn't already
-  // have an id of it's own.
-  create: function(model) {
-    if (!model.id) {
-        model.id = guid();
-        model.set(model.idAttribute, model.id);
-    }
-    this.localStorage().setItem(this.name+"-"+model.id, JSON.stringify(model));
-    this.records.push(model.id.toString());
-    this.save();
-    return model.toJSON();
-  },
-
-  // Update a model by replacing its copy in `this.data`.
-  update: function(model) {
-    this.localStorage().setItem(this.name+"-"+model.id, JSON.stringify(model));
-    if (!_.include(this.records, model.id.toString())) this.records.push(model.id.toString()); this.save();
-    return model.toJSON();
-  },
-
-  // Retrieve a model from `this.data` by id.
-  find: function(model) {
-    return JSON.parse(this.localStorage().getItem(this.name+"-"+model.id));
-  },
-
-  // Return the array of all models currently in storage.
-  findAll: function() {
-    return _(this.records).chain()
-        .map(function(id){return JSON.parse(this.localStorage().getItem(this.name+"-"+id));}, this)
-        .compact()
-        .value();
-  },
-
-  // Delete a model from `this.data`, returning it.
-  destroy: function(model) {
-    this.localStorage().removeItem(this.name+"-"+model.id);
-    this.records = _.reject(this.records, function(record_id){return record_id == model.id.toString();});
-    this.save();
-    return model;
-  },
-
-  localStorage: function() {
-      return localStorage;
-  }
-
-});
-
-// localSync delegate to the model or collection's
-// *localStorage* property, which should be an instance of `Store`.
-// window.Store.sync and Backbone.localSync is deprectated, use Backbone.LocalStorage.sync instead
-Backbone.LocalStorage.sync = window.Store.sync = Backbone.localSync = function(method, model, options, error) {
-  var store = model.localStorage || model.collection.localStorage;
-
-  // Backwards compatibility with Backbone <= 0.3.3
-  if (typeof options == 'function') {
-    options = {
-      success: options,
-      error: error
+    // Generate four random hex digits.
+    function S4() {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
     };
-  }
 
-  var resp;
+    // Generate a pseudo-GUID by concatenating random hexadecimal.
+    function guid() {
+        return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+    };
 
-  switch (method) {
-    case "read":    resp = model.id != undefined ? store.find(model) : store.findAll(); break;
-    case "create":  resp = store.create(model);                            break;
-    case "update":  resp = store.update(model);                            break;
-    case "delete":  resp = store.destroy(model);                           break;
-  }
+    // Our Store is represented by a single JS object in *gossamerStorage*. Create it
+    // with a meaningful name, like the name you'd give a table.
+    // window.Store is deprectated, use Backbone.GossamerStorage instead
+    Backbone.GossamerStorage = window.Store = function (name) {
+        this.name = name;
+        // var store = this.gossamerStorage().getItem(this.name);
+        // this.records = (store && store.split(",")) || [];
+        this.records = [];
+    };
 
-  if (resp) {
-    options.success(resp);
-  } else {
-    options.error("Record not found");
-  }
-};
+    _.extend(Backbone.GossamerStorage.prototype, {
 
-Backbone.ajaxSync = Backbone.sync;
+        // Save the current state of the **Store** to *gossamerStorage*.
+        save: function (newAttributes) {
+			
+			
+        },
 
-Backbone.getSyncMethod = function(model) {
-	if(model.localStorage || (model.collection && model.collection.localStorage))
-	{
-		return Backbone.localSync;
-	}
+        // Add a model, giving it a (hopefully)-unique GUID, if it doesn't already
+        // have an id of it's own.
+        create: function (model, success) {
+            // send create article call for the schema in the .name property
+            var doNothing = function () {};
+            var options = {
+                SchemaName: this.name
+            };
+            model = Gossamer.translator.toArticle(model, options);
+            var that = this;
+            Gossamer.storage.articles.create(4152, this.name, model, function (article) {
+                var model = Gossamer.translator.fromArticle(article);
+                that.records.push(model);
+                // that.save();
+                (success || function () {})(model);
+                return model;
+            }, doNothing);
+            return;
+            if (!model.id) {
+                model.id = guid();
+                model.set(model.idAttribute, model.id);
+            }
+            this.gossamerStorage().setItem(this.name + "-" + model.id, JSON.stringify(model));
+            this.records.push(model.id.toString());
+            this.save();
+            return model.toJSON();
+        },
 
-	return Backbone.ajaxSync;
-};
+        // Update a model by replacing its copy in `this.data`.
+        update: function (model) {
+            console.dir(model);
+            this.gossamerStorage().setItem(this.name + "-" + model.id, JSON.stringify(model));
+            if (!_.include(this.records, model.id.toString())) this.records.push(model.id.toString());
+            this.save();
+            return model.toJSON();
+        },
 
-// Override 'Backbone.sync' to default to localSync,
-// the original 'Backbone.sync' is still available in 'Backbone.ajaxSync'
-Backbone.sync = function(method, model, options, error) {
-	return Backbone.getSyncMethod(model).apply(this, [method, model, options, error]);
-};
+        // Retrieve a model from `this.data` by id.
+        find: function (model) {
+            // send get article call
+            return {};
+            return JSON.parse(this.gossamerStorage().getItem(this.name + "-" + model.id));
+        },
+
+        // Return the array of all models currently in storage.
+        findAll: function (success) {
+            // reset records
+            this.records.length = 0;
+
+            var doNothing = function () {};
+            var records = this.records;
+            var options = {
+                SchemaName: this.name
+            };
+            Gossamer.storage.articles.searchAll(4152, this.name, '', 1, function (articles, totalRecords) {
+                for (var x = 0; x < articles.length; x = x + 1) {
+                    records.push(Gossamer.translator.fromArticle(articles[x]));
+                }
+                success(records);
+            }, doNothing);
+
+            return;
+
+            return _(this.records).chain().map(function (id) {
+                return JSON.parse(this.gossamerStorage().getItem(this.name + "-" + id));
+            }, this).compact().value();
+        },
+
+        // Delete a model from `this.data`, returning it.
+        destroy: function (model) {
+            // send article delete call
+            var options = {
+                SchemaName: this.name
+            };
+            var doNothing = function () {};
+            var that = this;
+            Gossamer.storage.articles.deleteArticle(4152, model.id, this.name, function () {
+                that.records = _.reject(that.records, function (record_id) {
+                    return record_id == model.id.toString();
+                });
+            }, doNothing);
+
+            return;
+
+            this.gossamerStorage().removeItem(this.name + "-" + model.id);
+            this.records = _.reject(this.records, function (record_id) {
+                return record_id == model.id.toString();
+            });
+            this.save();
+            return model;
+        },
+
+        gossamerStorage: function () {
+            return Gossamer.storage;
+        }
+
+    });
+
+    // gossamerSync delegate to the model or collection's
+    // *gossamerStorage* property, which should be an instance of `Store`.
+    // window.Store.sync and Backbone.gossamerSync is deprectated, use Backbone.GossamerStorage.sync instead
+    Backbone.GossamerStorage.sync = window.Store.sync = Backbone.gossamerSync = function (method, model, options, error) {
+        var store = model.gossamerStorage || model.collection.gossamerStorage;
+        if (!Gossamer.authentication.getSessionId()) {
+            Gossamer.init();
+        }
+        // Backwards compatibility with Backbone <= 0.3.3
+        if (typeof options == 'function') {
+            options = {
+                success: options,
+                error: error || function () {}
+            };
+        }
+
+        var resp;
+        var onSuccess = options.success || function () {};
+        switch (method) {
+        case "read":
+            resp = model.id != undefined ? store.find(model) : store.findAll(onSuccess);
+            break;
+        case "create":
+            resp = store.create(model, onSuccess);
+            break;
+        case "update":
+            resp = store.update(model);
+            break;
+        case "delete":
+            resp = store.destroy(model);
+            break;
+        }
+
+        if (resp) {
+            options.success(resp);
+        } else {
+            options.error("Record not found");
+        }
+    };
+
+    Backbone.ajaxSync = Backbone.sync;
+
+    Backbone.getSyncMethod = function (model) {
+        if (model.gossamerStorage || (model.collection && model.collection.gossamerStorage)) {
+            return Backbone.gossamerSync;
+        }
+
+        return Backbone.ajaxSync;
+    };
+
+    // Override 'Backbone.sync' to default to gossamerSync,
+    // the original 'Backbone.sync' is still available in 'Backbone.ajaxSync'
+    Backbone.sync = function (method, model, options, error) {
+        return Backbone.getSyncMethod(model).apply(this, [method, model, options, error]);
+    };
 
 })();
