@@ -44,7 +44,7 @@ Depends on	jQuery
         this.post = function (url, data, async, onSuccess, onError) {
             onError = onError || function () { };
             $.ajax({
-                url: url,
+                url: appendSessionId(url),
                 type: 'POST',
                 async: async,
                 contentType: "application/json",

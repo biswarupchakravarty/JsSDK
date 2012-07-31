@@ -971,8 +971,8 @@ function GossamerStorage(op) {
             });
         },
 
-        update: function (deploymentId, article, onSuccess, onError) {
-            Gossamer.utils.ajax.post(Gossamer.storage.urlFactory.article.getUpdateUrl(deploymentId, article.__Id), article, true, function (data) {
+        update: function (deploymentId, schemaName, articleId, updateCommand, onSuccess, onError) {
+            Gossamer.utils.ajax.post(Gossamer.storage.urlFactory.article.getUpdateUrl(deploymentId, schemaName, articleId), updateCommand, true, function (data) {
                 if (typeof (data.Article) != "undefined" && data.Article != null) {
                     if (typeof (onSuccess) == "function") {
                         onSuccess(data.Article);

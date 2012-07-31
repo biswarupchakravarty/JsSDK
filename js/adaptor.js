@@ -35,8 +35,6 @@
 
         // Save the current state of the **Store** to *gossamerStorage*.
         save: function (newAttributes) {
-			
-			
         },
 
         // Add a model, giving it a (hopefully)-unique GUID, if it doesn't already
@@ -68,8 +66,52 @@
         },
 
         // Update a model by replacing its copy in `this.data`.
-        update: function (model) {
-            console.dir(model);
+        update: function (model, success) {
+			var doNothing = function() {};
+			
+			// pull old copy from model
+			var old = null;
+			for (var x=0;x<this.records.length;x=x+1) {
+				if (this.records[x].id == model.id) {
+					old = this.records[x];
+					break;
+				}
+			}
+			
+			// find diff
+			var changed = [];
+			var deleted = [];
+			var mAttrs = model.attributes;
+			
+			var command = {
+				"UpdateCommands": [
+					{
+						"__type": "UpdatePropertiesCommand:http://www.tavisca.com/gossamer/datacontracts/2011/11",
+						"PropertiesToAddOrUpdate": [],
+						"PropertiesToRemove": []
+					}
+				]
+			};
+			
+			for (var attr in old) {
+				if (typeof(mAttrs[attr]) == undefined && typeof(old[attr]) != undefined) {
+					// deleted.push(attr);
+					command.UpdateCommands[0].PropertiesToRemove.push(attr);
+				} else if (old[attr] != mAttrs[attr]) {
+					// changed.push({'key': attr, 'value': mAttrs[attr]});
+					command.UpdateCommands[0].PropertiesToAddOrUpdate.push({'Key': attr, 'Value': mAttrs[attr]});
+				}
+			}
+			
+			var that = this;
+			Gossamer.storage.articles.update(4152, this.name, model.id, command, function(article) {
+				var model = Gossamer.translator.fromArticle(article);
+				if (!_.include(that.records, model.id.toString())) that.records.push(model.id.toString());
+				success(model);
+			}, doNothing);
+			
+			return;
+			
             this.gossamerStorage().setItem(this.name + "-" + model.id, JSON.stringify(model));
             if (!_.include(this.records, model.id.toString())) this.records.push(model.id.toString());
             this.save();
@@ -108,7 +150,7 @@
         },
 
         // Delete a model from `this.data`, returning it.
-        destroy: function (model) {
+        destroy: function (model, success) {
             // send article delete call
             var options = {
                 SchemaName: this.name
@@ -116,9 +158,12 @@
             var doNothing = function () {};
             var that = this;
             Gossamer.storage.articles.deleteArticle(4152, model.id, this.name, function () {
-                that.records = _.reject(that.records, function (record_id) {
-                    return record_id == model.id.toString();
+                that.records = _.reject(that.records, function (record) {
+                    return record.id == model.id.toString();
                 });
+				
+				// success callback
+				success();
             }, doNothing);
 
             return;
@@ -163,10 +208,10 @@
             resp = store.create(model, onSuccess);
             break;
         case "update":
-            resp = store.update(model);
+            resp = store.update(model, onSuccess);
             break;
         case "delete":
-            resp = store.destroy(model);
+            resp = store.destroy(model, onSuccess);
             break;
         }
 

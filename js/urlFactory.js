@@ -63,8 +63,8 @@
         getCreateUrl: function (deploymentId, schemaName) {
             return String.format('{0}/{1}/{2}', this.articleServiceUrl, deploymentId, schemaName);
         },
-        getUpdateUrl: function (deploymentId, articleId) {
-            return String.format('{0}/update/{1}/{2}', this.articleServiceUrl, deploymentId, articleId);
+        getUpdateUrl: function (deploymentId, schemaName, articleId) {
+            return String.format('{0}/{1}/{2}/{3}', this.articleServiceUrl, deploymentId, schemaName, articleId);
         }
     };
 
