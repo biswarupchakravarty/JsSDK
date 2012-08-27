@@ -1,13 +1,7 @@
 /**
  * Backbone gossamerStorage Adapter
- * https://github.com/jeromegn/Backbone.gossamerStorage
  */ (function () {
-    // A simple module to replace `Backbone.sync` with *gossamerStorage*-based
-    // persistence. Models are given GUIDS, and saved into a JSON object. Simple
-    // as that.
 
-    // Hold reference to Underscore.js and Backbone.js in the closure in order
-    // to make things work even if they are removed from the global namespace
     var _ = this._;
     var Backbone = this.Backbone;
 
@@ -16,31 +10,21 @@
         return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
     };
 
-    // Generate a pseudo-GUID by concatenating random hexadecimal.
     function guid() {
         return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
     };
 
-    // Our Store is represented by a single JS object in *gossamerStorage*. Create it
-    // with a meaningful name, like the name you'd give a table.
-    // window.Store is deprectated, use Backbone.GossamerStorage instead
     Backbone.GossamerStorage = window.Store = function (name) {
         this.name = name;
-        // var store = this.gossamerStorage().getItem(this.name);
-        // this.records = (store && store.split(",")) || [];
         this.records = [];
     };
 
     _.extend(Backbone.GossamerStorage.prototype, {
 
-        // Save the current state of the **Store** to *gossamerStorage*.
         save: function (newAttributes) {
         },
 
-        // Add a model, giving it a (hopefully)-unique GUID, if it doesn't already
-        // have an id of it's own.
         create: function (model, success) {
-            // send create article call for the schema in the .name property
             var doNothing = function () {};
             var options = {
                 SchemaName: this.name
@@ -65,7 +49,6 @@
             return model.toJSON();
         },
 
-        // Update a model by replacing its copy in `this.data`.
         update: function (model, success) {
 			var doNothing = function() {};
 			
@@ -118,14 +101,12 @@
             return model.toJSON();
         },
 
-        // Retrieve a model from `this.data` by id.
         find: function (model) {
             // send get article call
             return {};
             return JSON.parse(this.gossamerStorage().getItem(this.name + "-" + model.id));
         },
 
-        // Return the array of all models currently in storage.
         findAll: function (success) {
             // reset records
             this.records.length = 0;
@@ -149,7 +130,6 @@
             }, this).compact().value();
         },
 
-        // Delete a model from `this.data`, returning it.
         destroy: function (model, success) {
             // send article delete call
             var options = {
@@ -182,9 +162,6 @@
 
     });
 
-    // gossamerSync delegate to the model or collection's
-    // *gossamerStorage* property, which should be an instance of `Store`.
-    // window.Store.sync and Backbone.gossamerSync is deprectated, use Backbone.GossamerStorage.sync instead
     Backbone.GossamerStorage.sync = window.Store.sync = Backbone.gossamerSync = function (method, model, options, error) {
         var store = model.gossamerStorage || model.collection.gossamerStorage;
         if (!Gossamer.authentication.getSessionId()) {
@@ -232,8 +209,6 @@
         return Backbone.ajaxSync;
     };
 
-    // Override 'Backbone.sync' to default to gossamerSync,
-    // the original 'Backbone.sync' is still available in 'Backbone.ajaxSync'
     Backbone.sync = function (method, model, options, error) {
         return Backbone.getSyncMethod(model).apply(this, [method, model, options, error]);
     };
